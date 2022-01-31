@@ -9,3 +9,7 @@ export interface FieldMethods{
   validate:(context: Context)=>Promise<boolean>;
   reduce: (context:Context, value: string)=>Promise<Context>;
 }
+
+export type BusinessForm = Record<string, FieldMethods>;
+
+export type Unsubscribe = ()=>void;
