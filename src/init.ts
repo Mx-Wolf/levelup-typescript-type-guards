@@ -1,3 +1,4 @@
+import { attachMethods } from './attach-methods';
 import { BusinessForm, FieldMethods, Unsubscribe } from './i-face-methods';
 
 const seed = ():Unsubscribe[] =>[];
@@ -8,7 +9,7 @@ const attachLifeCycle = (
   if(targetElement === null){
     return [];
   }
-  throw new Error();
+  return attachMethods(targetElement, methods);
 };
 
 const makeReducer = (
