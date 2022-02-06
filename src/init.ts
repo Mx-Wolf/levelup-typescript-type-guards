@@ -1,25 +1,3 @@
-import { attachMethods } from './attach-methods';
-import { BusinessForm, FieldMethods, Unsubscribe } from './i-face-methods';
+import { bindForm } from './binder';
 
-const seed = ():Unsubscribe[] =>[];
-
-const attachLifeCycle = (
-  targetElement: Element | null,
-  methods: FieldMethods):Unsubscribe[] =>{
-  if(targetElement === null){
-    return [];
-  }
-  return attachMethods(targetElement, methods);
-};
-
-const makeReducer = (
-  container:HTMLElement,
-)=>(
-  accumulator:Unsubscribe[],
-  [key, methods]:[key:string, methods:FieldMethods],
-)=>[...accumulator, ...attachLifeCycle(container.querySelector(`name=[${key}]`), methods)];
-
-export const init = (container:HTMLElement, form:BusinessForm):Unsubscribe =>{
-  const subscriptions:Unsubscribe[] = Object.entries(form).reduce(makeReducer(container),seed());
-  return ()=>{subscriptions.forEach((subscription)=>subscription());};
-};
+export const init = bindForm;

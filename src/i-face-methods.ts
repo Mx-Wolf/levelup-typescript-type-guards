@@ -10,7 +10,3 @@ export interface FieldMethods{
   reduce: (context:Context, value: string)=>Promise<Context>;
   disabled: (context:Context)=>Promise<boolean>;
 }
-
-export type BusinessForm = Record<string, FieldMethods>;
-
-export type Unsubscribe = ()=>void;
