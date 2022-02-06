@@ -1,40 +1,30 @@
 import { Unsubscribe } from './i-face-binder';
 import { ListenerFactory } from './i-face-listener-factory';
+import { subscribe } from './subscribe';
+import {
+  isButton,
+  isCheckBox,
+  isInput,
+  isSelect,
+  isTextArea,
+} from './type-guards';
 
-interface AttachListener {
-  (target: HTMLButtonElement, name: 'click', listener: ReturnType<ListenerFactory['makeButtonClick']>): Unsubscribe;
-  (target: HTMLInputElement, name: 'click', listener: ReturnType<ListenerFactory['makeInputClick']>): Unsubscribe;
-  (target: HTMLInputElement, name: 'input', listener: ReturnType<ListenerFactory['makeInputInput']>): Unsubscribe;
-  (target: HTMLSelectElement, name: 'input', listener: ReturnType<ListenerFactory['makeSelectInput']>): Unsubscribe;
-  (target: HTMLTextAreaElement, name: 'input', listener: ReturnType<ListenerFactory['makeTextAreaInput']>): Unsubscribe;
-}
-
-const isButton = (element: Element): element is HTMLButtonElement => element.tagName === 'BUTTON';
-const isInput = (element: Element): element is HTMLInputElement => element.tagName === 'INPUT';
-const isCheckBox = (element: HTMLInputElement): boolean => element.type === 'checkbox';
-const isSelect = (element: Element): element is HTMLSelectElement => element.tagName === 'SELECT';
-const isTextArea = (element: Element): element is HTMLTextAreaElement => element.tagName === 'TEXTAREA';
-
-const attachByName: AttachListener = (target, name, handler) => {
-  target.addEventListener(name, handler as never);
-  return ()=>target.removeEventListener(name, handler as never);
-};
 
 const attach = (target: Element, methods: ListenerFactory): Unsubscribe => {
   if (isButton(target)) {
-    return attachByName(target, 'click', methods.makeButtonClick());
+    return subscribe(target, 'click', methods.makeButtonClick());
   }
   if (isInput(target)) {
-    if(isCheckBox(target)){
-      return attachByName(target, 'click', methods.makeInputClick());
+    if (isCheckBox(target)) {
+      return subscribe(target, 'click', methods.makeInputClick());
     }
-    return attachByName(target, 'input', methods.makeInputInput());
+    return subscribe(target, 'input', methods.makeInputInput());
   }
-  if(isSelect(target)){
-    return attachByName(target,'input', methods.makeSelectInput());
+  if (isSelect(target)) {
+    return subscribe(target, 'input', methods.makeSelectInput());
   }
-  if(isTextArea(target)){
-    return attachByName(target,'input',methods.makeTextAreaInput());
+  if (isTextArea(target)) {
+    return subscribe(target, 'input', methods.makeTextAreaInput());
   }
   throw new Error(`unexpected target type ${target.tagName}`);
 };
